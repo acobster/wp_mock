@@ -48,6 +48,8 @@ class WP_Mock {
 
 	protected static $__use_patchwork = false;
 
+	protected static $deprecated_calls = array();
+
 	/**
 	 * @param boolean $use_patchwork
 	 */
@@ -341,6 +343,7 @@ class WP_Mock {
 	 * @param array  $arguments
 	 */
 	public static function wpFunction( $function_name, $arguments = array() ) {
+		self::$deprecated_calls[] = array( __METHOD__, array( $function_name, $arguments ) );
 		self::userFunction( $function_name, $arguments );
 	}
 
@@ -373,6 +376,7 @@ class WP_Mock {
 	 * @param array  $arguments
 	 */
 	public static function wpPassthruFunction( $function_name, $arguments = array() ) {
+		self::$deprecated_calls[] = array( __METHOD__, array( $function_name, $arguments ) );
 		self::passthruFunction( $function_name, $arguments );
 	}
 
