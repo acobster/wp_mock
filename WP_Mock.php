@@ -48,7 +48,7 @@ class WP_Mock {
 
 	protected static $__use_patchwork = false;
 
-	protected static $deprecated_calls = array();
+	protected static $deprecated_listener = array();
 
 	/**
 	 * @param boolean $use_patchwork
@@ -68,7 +68,8 @@ class WP_Mock {
 	 */
 	public static function bootstrap() {
 		if ( ! self::$__bootstrapped ) {
-			self::$__bootstrapped = true;
+			self::$__bootstrapped        = true;
+			static::$deprecated_listener = new \WP_Mock\DeprecatedListener();
 			require_once __DIR__ . '/WP_Mock/API/function-mocks.php';
 			require_once __DIR__ . '/WP_Mock/API/constant-mocks.php';
 			if ( self::usingPatchwork() ) {
@@ -110,6 +111,7 @@ class WP_Mock {
 	public static function tearDown() {
 		self::$event_manager->flush();
 		self::$function_manager->flush();
+		static::getDeprecatedListener()->reset();
 
 		\Mockery::close();
 		\WP_Mock\Handler::cleanup();
@@ -343,7 +345,7 @@ class WP_Mock {
 	 * @param array  $arguments
 	 */
 	public static function wpFunction( $function_name, $arguments = array() ) {
-		self::$deprecated_calls[] = array( __METHOD__, array( $function_name, $arguments ) );
+		static::getDeprecatedListener()->logDeprecatedCall( __METHOD__, array( $function_name, $arguments ) );
 		self::userFunction( $function_name, $arguments );
 	}
 
@@ -376,7 +378,7 @@ class WP_Mock {
 	 * @param array  $arguments
 	 */
 	public static function wpPassthruFunction( $function_name, $arguments = array() ) {
-		self::$deprecated_calls[] = array( __METHOD__, array( $function_name, $arguments ) );
+		static::getDeprecatedListener()->logDeprecatedCall( __METHOD__, array( $function_name, $arguments ) );
 		self::passthruFunction( $function_name, $arguments );
 	}
 
@@ -414,5 +416,12 @@ class WP_Mock {
 	 */
 	public static function fuzzyObject( $thing ) {
 		return new FuzzyObject( $thing );
+	}
+
+	/**
+	 * @return \WP_Mock\DeprecatedListener
+	 */
+	public static function getDeprecatedListener() {
+		return static::$deprecated_listener;
 	}
 }
