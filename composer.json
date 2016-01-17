@@ -19,5 +19,11 @@
 		"branch-alias": {
 			"dev-dev": "1.0.x-dev"
 		}
+	},
+	"scripts": {
+		"test:behat": "behat",
+		"test"      : [
+			"@test:behat"
+		]
 	}
 }
