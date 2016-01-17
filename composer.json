@@ -25,5 +25,10 @@
 		"test"      : [
 			"@test:behat"
 		]
+	},
+	"config": {
+		"platform": {
+			"php": "5.3.3"
+		}
 	}
 }
