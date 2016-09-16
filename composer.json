@@ -9,6 +9,7 @@
 		"antecedent/patchwork": "~1.2"
 	},
 	"require-dev": {
+		"behat/behat": "^3.1"
 	},
 	"autoload"   : {
 		"psr-4"   : {"WP_Mock\\": "./php/WP_Mock"},
